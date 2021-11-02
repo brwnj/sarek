@@ -627,7 +627,7 @@ process BuildIntervals {
     output:
         file("${fastaFai.baseName}.bed") into intervalBuilt
 
-    when: !(params.intervals) && !('annotate' in step) && !('controlfreec' in step) 
+    when: !(params.intervals) && !('annotate' in step) && !('controlfreec' in step)
 
     script:
     """
@@ -1276,7 +1276,7 @@ process MarkDuplicates {
         --ASSUME_SORT_ORDER coordinate \
         --CREATE_INDEX true \
         --OUTPUT ${idSample}.md.bam
-    
+
     mv ${idSample}.md.bai ${idSample}.md.bam.bai
     """
 }
@@ -1341,6 +1341,7 @@ process Sentieon_Dedup {
 
     output:
         set idPatient, idSample, file("${idSample}.deduped.bam"), file("${idSample}.deduped.bam.bai") into bam_sentieon_dedup
+        file("${idSample}_*.txt")
 
     when: params.sentieon
 
@@ -2156,15 +2157,15 @@ process FreebayesSingle {
     tag "${idSample}-${intervalBed.baseName}"
 
     label 'cpus_1'
-    
+
     input:
         set idPatient, idSample, file(bam), file(bai), file(intervalBed) from bamFreebayesSingle
         file(fasta) from ch_fasta
         file(fastaFai) from ch_software_versions_yaml
-    
+
     output:
         set val("FreeBayes"), idPatient, idSample, file("${intervalBed.baseName}_${idSample}.vcf") into vcfFreebayesSingle
-    
+
     when: 'freebayes' in tools
 
     script:
@@ -2568,7 +2569,7 @@ process CalculateContamination {
 
     when: 'mutect2' in tools
 
-    script:   
+    script:
     """
     # calculate contamination
     gatk --java-options "-Xmx${task.memory.toGiga()}g" \
@@ -2880,7 +2881,7 @@ process CNVkit {
       --output-reference output_reference.cnn \
       --output-dir ./ \
       --diagram \
-      --scatter 
+      --scatter
     """
 }
 
@@ -2891,9 +2892,9 @@ process MSIsensor_scan {
     label 'cpus_1'
     label 'memory_max'
     label 'msisensor'
-    
+
     tag "${fasta}"
-    
+
     input:
     file(fasta) from ch_fasta
     file(fastaFai) from ch_fai
@@ -2917,9 +2918,9 @@ process MSIsensor_msi {
     label 'cpus_4'
     label 'memory_max'
     label 'msisensor'
-        
+
     tag "${idSampleTumor}_vs_${idSampleNormal}"
-    
+
     publishDir "${params.outdir}/VariantCalling/${idSampleTumor}_vs_${idSampleNormal}/MSIsensor", mode: params.publish_dir_mode
 
     input:
@@ -2946,9 +2947,9 @@ process MSIsensor_msiSingle {
     label 'cpus_4'
     label 'memory_max'
     label 'msisensor'
-        
+
     tag "${idSampleTumor}"
-    
+
     publishDir "${params.outdir}/VariantCalling/${idSampleTumor}/MSIsensor", mode: params.publish_dir_mode
 
     input:
@@ -3251,7 +3252,7 @@ process ControlFREEC {
     echo "${contamination_adjustment}" >> ${config}
     echo "${contamination_value}" >> ${config}
     echo "" >> ${config}
-    
+
     echo "[control]" >> ${config}
     echo "inputFormat = pileup" >> ${config}
     echo "mateFile = \${PWD}/${mpileupNormal}" >> ${config}
