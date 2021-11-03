@@ -1367,7 +1367,6 @@ process Sentieon_Dedup {
         -t ${task.cpus} \
         -i ${bam} \
         --algo Dedup \
-        --rmdup \
         --score_info ${idSample}_score.gz  \
         --metrics ${idSample}_dedup_metric.txt ${idSample}.deduped.bam
     """
